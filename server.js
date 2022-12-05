@@ -1,11 +1,15 @@
 const express = require("express");
 const cors = require("cors");
+const { connectDb } = require("./models/index");
 require("dotenv").config();
 const app = express();
+
+const productRoutes = require("./routes/productRoutes");
 
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+app.use("/product", productRoutes);
 
 const port = process.env.PORT || 8080;
 
@@ -14,10 +18,15 @@ app.get("/", (req, res) => {
   console.log(`get all this`);
 });
 
-app.listen(port, () => {
+const start = async () => {
   try {
-    console.log(`Servering running on port ${port}`);
+    await connectDb();
+    app.listen(port, () => {
+      console.log(`Servering running on port ${port}`);
+    });
   } catch (error) {
     console.log(error);
   }
-});
+};
+
+start();
